@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const authMiddleware  = require('./middlewares/authMiddleware');
+const authMiddleware  = require('./middlewares/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

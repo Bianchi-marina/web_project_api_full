@@ -91,22 +91,17 @@ async function updateUserAvatar(req, res) {
 
 async function login(req, res) {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({ message: "Credenciais inválidas." });
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Credenciais inválidas." });
     }
-
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-
     res.status(200).json({ token });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -114,15 +109,11 @@ async function login(req, res) {
 
 async function getUserInfo(req, res) {
   try {
-    const userId = req.user._id;
-    const user = await User.findById(userId);
-
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
-
     res.status(200).json(user);
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
