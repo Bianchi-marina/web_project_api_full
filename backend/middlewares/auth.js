@@ -1,26 +1,31 @@
 const jwt = require('jsonwebtoken');
 
-const authMiddleware = (req, res, next) => {
-
-  const authHeader = req.headers['authorization'];
-
-
-  if (!authHeader) {
-    return res.status(403).json({ message: 'Acesso não autorizado. Token não fornecido.' });
-  }
-
-  const token = authHeader.split(' ')[1];
-
-  try {
-
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = payload;
-
-    next();
-  } catch (error) {
-    res.status(403).json({ message: 'Acesso não autorizado. Token inválido.' });
-  }
+const handleAuthError = (res) => {
+  res
+    .status(401)
+    .send({ message: 'Autorização necessária' });
 };
 
-module.exports = authMiddleware;
+const extractBearerToken = (header) => {
+  return header.replace('Bearer ', '');
+};
 
+module.exports = (req, res, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    return handleAuthError(res);
+  }
+
+  const token = extractBearerToken(authorization);
+  let payload;
+
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return handleAuthError(res);
+  }
+
+  req.user = payload;
+  next();
+};

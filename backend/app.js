@@ -1,10 +1,11 @@
+require('express-async-errors');
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
+// // const usersRouter = require('./routes/users');
+// const cardsRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const authMiddleware  = require('./middlewares/auth');
+const auth = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,12 +21,14 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 app.use(express.json());
 
-app.use('/users', usersRouter);
-app.use('/cards', authMiddleware, cardsRouter);
-
-
 app.post('/signin', login);
 app.post('/signup', createUser);
+app.use(auth);
+
+// app.use('/users', usersRouter);
+// app.use('/cards', cardsRouter);
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 
 app.get('/', (req, res) => {

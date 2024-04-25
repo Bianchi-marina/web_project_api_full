@@ -26,23 +26,22 @@ async function createCard(req, res) {
 
 async function deleteCard(req, res) {
   const cardId = req.params.cardId;
+  const userId = req.user._id;
   try {
-    const card = await Card.findById(cardId).orFail(() => {
-      const error = new Error('Cartão não encontrado');
-      error.statusCode = 404;
-      throw error;
-    });
-
-    if (card.userId.toString() !== req.user._id) {
-      return res.status(403).json({ message: 'Permissão negada. Você não pode excluir este cartão.' });
+    const card = await Card.findById(cardId);
+    if (!card) {
+      return res.status(404).json({ message: "Cartão não encontrado" });
     }
+
+    if (card.owner.toString() !== userId) {
+      return res.status(403).json({
+        message: "Permissão negada. Você não pode excluir este cartão.",
+      });
+    }
+
     await card.remove();
-    res.json({ message: 'Cartão deletado com sucesso' });
-
+    res.json({ message: "Cartão deletado com sucesso" });
   } catch (error) {
-    if (error.statusCode === 404) {
-      return res.status(404).json({ message: error.message });
-    }
     res.status(500).json({ message: error.message });
   }
 }

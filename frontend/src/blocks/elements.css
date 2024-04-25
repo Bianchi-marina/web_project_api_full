@@ -1,0 +1,113 @@
+.elements{
+    max-width: 880px;
+    margin: 0 auto;
+    margin-top: 46px;
+}
+.elements__card {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 20px;
+    column-gap: 17px; 
+} 
+.elements__li {
+    max-width: 282px;
+    list-style: none;
+    position: relative;
+}
+.elements__card-img {
+    display: block;
+    margin: 0;
+    width: 282px;
+    height: 282px;
+    border-radius: 10px 10px 0 0;
+    object-fit: cover;
+}
+
+.elements__card-text {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 20px 15px;
+    background-color: white;
+    color: black;
+    border-radius: 0 0 10px 10px;
+ 
+}
+
+.elements__card-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0;
+    font-size: 24px;
+    font-family: Inter;
+    font-weight: 900;
+}
+.elements__like {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+.elements__like-count {
+    color: black;
+    font-size: 13px;
+    font-family: Inter;
+    font-weight: 400;
+}
+
+.elements__button-like {
+    background-image: url(/public/images/heart-icon.png);
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    width: 21px;
+    height: 19px;
+    opacity: 100%;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.elements__button-like:hover {
+   opacity: 60%;
+}
+.elements__button-like_click {
+    background-image: url(/public/images/heart-full-icon.png);
+}
+
+.elements__trash {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    opacity: 0;
+    transition: 0.2s;
+    visibility: hidden;
+}
+.elements__trash_hidden {
+    visibility: visible;
+    opacity: 100%;
+}
+
+ @media screen and (max-width: 970px){
+    .elements {
+        max-width: 600px;
+    }
+    .elements__card {
+
+        grid-template-columns: auto;
+        place-content: center;
+    }
+ 
+}
