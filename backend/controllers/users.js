@@ -1,8 +1,7 @@
-const User = require("../models/User");
+const User = require("../models/user");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Card = require('../models/card');
 
 async function getAllUsers(req, res) {
   try {
@@ -14,17 +13,10 @@ async function getAllUsers(req, res) {
 }
 
 async function getUserById(req, res) {
-  const userId = req.params.userId;
-  try {
-    const user = await User.findById(userId);
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ message: "Usuário não encontrado" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  const { id } = req.params;
+
+  const userfind = await User.findById({_id:id});
+  res.status(200).json(userfind);
 }
 
 async function createUser(req, res, next) {
@@ -142,18 +134,7 @@ async function login(req, res) {
 }
 
 async function getUserInfo(req, res) {
-  const userId = req.user._id;
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'Usuário não encontrado' });
-    }
-    res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erro ao buscar informações do usuário' });
-  }
 }
 
 module.exports = {

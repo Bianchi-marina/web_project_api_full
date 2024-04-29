@@ -13,19 +13,13 @@ const extractBearerToken = (header) => {
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  if (!authorization) {
     return handleAuthError(res);
   }
 
   const token = extractBearerToken(authorization);
-  let payload;
 
-  try {
-    payload = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    return handleAuthError(res);
-  }
+  jwt.verify(token, process.env.JWT_SECRET);
 
-  req.user = payload;
   next();
 };
