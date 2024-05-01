@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const handleAuthError = (res) => {
   res
-    .status(401)
+    .status(403)
     .send({ message: 'Autorização necessária' });
 };
 
@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
   const token = extractBearerToken(authorization);
 
   jwt.verify(token, process.env.JWT_SECRET);
+  res.locals.decode = jwt.decode(token);
 
   next();
 };

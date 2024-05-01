@@ -35,6 +35,11 @@ async function createUser(req, res, next) {
   const { name, about, avatar, email, password } = value;
 
   try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Este email já está registrado' });
+    }
+
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -51,37 +56,16 @@ async function createUser(req, res, next) {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-
-  // const salt = await bcrypt.genSalt();
-  // const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-  // return User.create({ ...req.body, password: hashedPassword })
-  //   .then((user) => {
-  //     res.json(user);
-  //   })
-  //   .catch((err) => {
-  //     res.status(400).json(err);
-  //   });
 }
 
-async function updateUserProfile(req, res) {
-  const userId = req.user._id;
+async function updateUserProfile(req, res){
   const { name, about } = req.body;
+  const { id } = req.params;
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado" });
+    const updatedUser = await User.findByIdAndUpdate(id, { name, about }, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'perfil não atualizado' });
     }
-
-    if (userId !== req.params.userId) {
-      return res.status(403).json({
-        message: "Permissão negada. Você não pode editar este perfil.",
-      });
-    }
-
-    user.name = name;
-    user.about = about;
-    const updatedUser = await user.save();
     res.json(updatedUser);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -89,27 +73,19 @@ async function updateUserProfile(req, res) {
 }
 
 async function updateUserAvatar(req, res) {
-  const userId = req.user._id;
   const { avatar } = req.body;
+  const { id } = req.params;
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado" });
+    const updatedUser = await User.findByIdAndUpdate(id, { avatar }, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'avatar não atualizado' });
     }
-
-    if (userId !== req.params.userId) {
-      return res.status(403).json({
-        message: "Permissão negada. Você não pode editar este avatar.",
-      });
-    }
-
-    user.avatar = avatar;
-    const updatedUser = await user.save();
     res.json(updatedUser);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 }
+
 async function login(req, res) {
   const { email, password } = req.body;
 
@@ -124,7 +100,7 @@ async function login(req, res) {
       return res.status(401).json({ message: 'Credenciais inválidas' });
     }
 
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ _id: user._id, email: user.email, name: user.name, avatar: user.avatar}, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.json({ token });
   } catch (error) {
@@ -133,14 +109,12 @@ async function login(req, res) {
   }
 }
 
-async function getUserInfo(req, res) {
-
-}
+const getCurrentUser = async(req, res, next) => res.status(200).json(res.locals.decode);
 
 module.exports = {
   getAllUsers,
   getUserById,
-  getUserInfo,
+  getCurrentUser,
   updateUserProfile,
   updateUserAvatar,
   createUser,
