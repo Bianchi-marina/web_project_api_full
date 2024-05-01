@@ -5,7 +5,7 @@ function Card({ cardData, onCardClick, onCardDelete, onCardLike }) {
   const currentUser = useContext(CurrentUserContext);
   const { link, name, owner, likes } = cardData;
 
-  const isOwn = owner._id === currentUser._id;
+  const isOwn = owner === currentUser._id;
 
 
   const cardDeleteButtonClassName = `elements__trash ${

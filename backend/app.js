@@ -4,9 +4,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
-
-
+var cors = require('cors');
 const app = express();
+app.use(cors());
+app.options('*', cors());
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGODB_URI, {

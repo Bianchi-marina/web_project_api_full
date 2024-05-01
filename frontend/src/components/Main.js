@@ -1,7 +1,5 @@
-import { useContext } from "react";
+import { useEffect, useState } from "react";
 import Card from "./Card.js";
-import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
-
 function Main({
   cards,
   onEditAvatarClick,
@@ -11,7 +9,23 @@ function Main({
   onCardLike,
   onCardDelete,
 }) {
-  const currentUser = useContext(CurrentUserContext);
+  const [user, setUser] = useState([]);
+  const getUserInfo = async() => {
+    const response = await fetch('http://localhost:3000/users/me', {
+      headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      "Content-Type": "application/json"
+    },
+  })
+  const userInfo = await response.json();
+  setUser([userInfo]);
+  }
+  useEffect(()=> {
+    getUserInfo();
+  },[]);
+
+  if (user.length === 0) return <h1>Loading...</h1>
+  console.log(user);
 
   return (
     <>
@@ -24,13 +38,13 @@ function Main({
           >
             <img
               className="profile__img"
-              src={currentUser.avatar}
+              src={user[0].avatar}
               alt="Foto de perfil do usuário"
             />
           </button>
           <div className="profile__description">
-            <h2 className="profile__name">{currentUser.name}</h2>
-            <h2 className="profile__job">{currentUser.about}</h2>
+            <h2 className="profile__name">{user[0].name}</h2>
+            <h2 className="profile__job">{user[0].about}</h2>
             <button
               onClick={onEditProfileClick}
               type="button"

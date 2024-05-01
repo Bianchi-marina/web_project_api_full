@@ -6,7 +6,10 @@ class Api {
   
     getInitialCards() {
       return fetch(`${this._baseUrl}/cards`, {
-        headers: this._headers,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          "Content-Type": "application/json"
+        },
       })
       .then(res => {
           if (res.ok) {
@@ -44,7 +47,10 @@ class Api {
     createNewCard({ name, link}) {
       return fetch(`${this._baseUrl}/cards`, {
           method: "POST",
-          headers: this._headers,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             name: name,
             link: link,
@@ -97,7 +103,7 @@ class Api {
     }
   
     editAvatar({ avatar }) {
-      return fetch(`${this._baseUrl}/users/me/avatar`, {
+      return fetch(`${this._baseUrl}/users/me`, {
         method: "PATCH",
         headers: this._headers,
         body: JSON.stringify({ avatar: avatar }),
@@ -119,9 +125,9 @@ class Api {
 }
 
 const api = new Api({
-    baseUrl: "https://around.nomoreparties.co/v1/web_ptbr_08",
+    baseUrl: "http://localhost:3000",
     headers: {
-      authorization: "55ee091e-fdde-4068-8e71-e71a57ad15b5",
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
       "Content-Type": "application/json"
     }
 });

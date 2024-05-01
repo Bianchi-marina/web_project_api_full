@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const user = require('../models/user');
 
 async function getAllCards(req, res) {
   try {
@@ -11,11 +12,10 @@ async function getAllCards(req, res) {
 
 async function createCard(req, res) {
   const { name, link } = req.body;
-  const ownerId = req.user._id;
   try {
-    const newCard = new Card({ name, link, owner: ownerId });
+    const newCard = new Card({ name, link, owner: res.locals.decode });
     const savedCard = await newCard.save();
-    res.status(201).json(savedCard);
+     return res.status(201).json(savedCard);
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).json({ message: 'Dados inválidos passados para criar um cartão' });
@@ -25,24 +25,21 @@ async function createCard(req, res) {
 }
 
 async function deleteCard(req, res) {
-  const cardId = req.params.cardId;
-  try {
-    const deletedCard = await Card.findByIdAndDelete(cardId).orFail(() => {
-      const error = new Error('Cartão não encontrado');
-      error.statusCode = 404;
-      throw error;
-    });
-    res.json({ message: 'Cartão deletado com sucesso' });
-  } catch (error) {
-    if (error.statusCode === 404) {
-      return res.status(404).json({ message: error.message });
-    }
-    res.status(500).json({ message: error.message });
+  const {_id} = res.locals.decode;
+  const {cardId} = req.params;
+  const card = await Card.findOne({owner: _id, _id: cardId});
+  if (!card) {
+    return res.status(404).json({message: 'não existe'});
   }
+  if (!card.owner === _id) {
+    return res.status(403).json({message: 'não é autorizado'});
+  }
+  await card.deleteOne({_id: cardId});
+  res.status(200).json({message: 'deletado'});
 }
 
 async function likeCard(req, res) {
-  const userId = req.user._id;
+  const userId = res.locals.decode._id;
   const cardId = req.params.cardId;
   try {
     const updatedCard = await Card.findByIdAndUpdate(
@@ -53,14 +50,14 @@ async function likeCard(req, res) {
     if (!updatedCard) {
       return res.status(404).json({ message: 'Cartão não encontrado' });
     }
-    res.json(updatedCard);
+    res.status(200).json(updatedCard);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
 async function dislikeCard(req, res){
-  const userId = req.user._id;
+  const userId = res.locals.decode._id;
   const cardId = req.params.cardId;
   try {
     const updatedCard = await Card.findByIdAndUpdate(

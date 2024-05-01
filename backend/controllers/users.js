@@ -59,28 +59,14 @@ async function createUser(req, res, next) {
 }
 
 async function updateUserProfile(req, res){
-  const { name, about } = req.body;
-  const { id } = req.params;
+  const {_id} = res.locals.decode;
+  const { name, about, avatar} = req.body;
   try {
-    const updatedUser = await User.findByIdAndUpdate(id, { name, about }, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(_id, { name, about, avatar}, { new: true });
     if (!updatedUser) {
       return res.status(404).json({ message: 'perfil não atualizado' });
     }
-    res.json(updatedUser);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-}
-
-async function updateUserAvatar(req, res) {
-  const { avatar } = req.body;
-  const { id } = req.params;
-  try {
-    const updatedUser = await User.findByIdAndUpdate(id, { avatar }, { new: true });
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'avatar não atualizado' });
-    }
-    res.json(updatedUser);
+    res.status(200).json(updatedUser);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -100,7 +86,7 @@ async function login(req, res) {
       return res.status(401).json({ message: 'Credenciais inválidas' });
     }
 
-    const token = jwt.sign({ _id: user._id, email: user.email, name: user.name, avatar: user.avatar}, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ _id: user._id, email: user.email, name: user.name, avatar: user.avatar, about: user.about}, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.json({ token });
   } catch (error) {
@@ -109,14 +95,13 @@ async function login(req, res) {
   }
 }
 
-const getCurrentUser = async(req, res, next) => res.status(200).json(res.locals.decode);
+const getCurrentUser = async(req, res, next) => res.status(200).json(res.locals.findUser);
 
 module.exports = {
   getAllUsers,
   getUserById,
   getCurrentUser,
   updateUserProfile,
-  updateUserAvatar,
   createUser,
   login,
 };

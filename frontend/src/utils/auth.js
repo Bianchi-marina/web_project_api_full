@@ -1,8 +1,8 @@
-const BASE_URL = 'https://register.nomoreparties.co';
+const BASE_URL = 'http://localhost:3000';
 
 export const register = async (email, password) => {
   try {
-    const response = await fetch(`${BASE_URL}/signup`, {
+    const response = await fetch(`${BASE_URL}/users/singup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -25,7 +25,7 @@ export const register = async (email, password) => {
 
 export const authorize = async (email, password) => {
   try {
-    const response = await fetch(`${BASE_URL}/signin`, {
+    const response = await fetch(`${BASE_URL}/users/singin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
