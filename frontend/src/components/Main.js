@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Card from "./Card.js";
+import { CardContext } from "../contexts/getCard.js";
 function Main({
-  cards,
   onEditAvatarClick,
   onEditProfileClick,
   onAddPlaceClick,
   onCardClick,
-  onCardLike,
-  onCardDelete,
 }) {
+  const {cards,setCard,handleCards} = useContext(CardContext);
   const [user, setUser] = useState([]);
   const getUserInfo = async() => {
     const response = await fetch('http://localhost:3000/users/me', {
@@ -20,12 +19,15 @@ function Main({
   const userInfo = await response.json();
   setUser([userInfo]);
   }
+
+  
+
   useEffect(()=> {
     getUserInfo();
+    handleCards();
   },[]);
 
   if (user.length === 0) return <h1>Loading...</h1>
-  console.log(user);
 
   return (
     <>
@@ -77,8 +79,6 @@ function Main({
               cardData={card}
               key={card._id}
               onCardClick={onCardClick}
-              onCardLike={onCardLike}
-              onCardDelete={onCardDelete}
             />
           ))}
         </ul>

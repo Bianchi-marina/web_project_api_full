@@ -1,30 +1,71 @@
-import { useContext } from "react";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import {  useContext, useEffect, useState } from "react";
+import { CardContext } from "../contexts/getCard";
 
-function Card({ cardData, onCardClick, onCardDelete, onCardLike }) {
-  const currentUser = useContext(CurrentUserContext);
+
+function Card({ cardData, onCardClick }) {
   const { link, name, owner, likes } = cardData;
-
-  const isOwn = owner === currentUser._id;
+  const [user, setUser] = useState([]);
+  const [isOwn, setIsOwn] = useState(false); 
+  const [isLiked, setIsLiked] = useState(false);
+  const {cards,setCard,handleCards} = useContext(CardContext);
+  console.log(cards);
 
 
   const cardDeleteButtonClassName = `elements__trash ${
     !isOwn ? "" : "elements__trash_hidden"
   }`;
 
-  const isLiked = likes.some((like) => like._id === currentUser._id);
+  const handleLike = async(id) => {
+    const response = await fetch(`http://localhost:3000/cards/${id}/likes`,{
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        "Content-Type": "application/json"
+      },
+    })
+    const handleLike = await response.json();
+    handleCards();
+    return handleLike;
+  }
+  const handleDelete = async(id) => {
+    const response = await fetch(`http://localhost:3000/cards/${id}`,{
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        "Content-Type": "application/json"
+      },
+    })
+    const handleDelete = await response.json();
+    handleCards();
+    return handleDelete;
+  }
 
-  const cardLikeButtonClassName = `elements__button-like ${
-    isLiked ? "elements__button-like_click" : ""
-  }`;
+  const getUserInfo = async() => {
+    const response = await fetch('http://localhost:3000/users/me', {
+      headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      "Content-Type": "application/json"
+    },
+  })
+  const userInfo = await response.json();
+  setUser([userInfo]);
+  setIsOwn(userInfo._id === owner);
+  setIsLiked(likes.some((like) => like === userInfo._id));
+  }
+  useEffect(()=> {
+    getUserInfo();
+  },[cardData]);
+
 
   return (
     <>
-      <li className="elements__li">
+    {
+      user.length>0?(
+        <li className="elements__li">
         <button
           type="button"
           className={cardDeleteButtonClassName}
-          onClick={() => onCardDelete(cardData)}
+          onClick={() => handleDelete(cardData._id)}
         >
           <img
             className="elements__button-trash"
@@ -43,17 +84,31 @@ function Card({ cardData, onCardClick, onCardDelete, onCardLike }) {
         <div className="elements__card-text">
           <p className="elements__card-name">{name}</p>
           <div className="elements__like">
+         {
+          isLiked?(
             <button
-              type="button"
-              name="like"
-              id="likeButton"
-              className={cardLikeButtonClassName}
-              onClick={() => onCardLike(cardData)}
-            ></button>
+            onClick={() => handleLike(cardData._id)}
+            type="button"
+            name="like"
+            id="likeButton"
+            className="elements__button-like_click"
+          ></button>
+          ):(
+          <button
+            onClick={() => handleLike(cardData._id)}
+            type="button"
+            name="like"
+            id="likeButton"
+            className="elements__button-like"
+          ></button>
+        )
+         }
             <span className="elements__like-count">{likes.length}</span>
           </div>
         </div>
       </li>
+      ): <h1>Loading...</h1>
+    }
     </>
   );
 }

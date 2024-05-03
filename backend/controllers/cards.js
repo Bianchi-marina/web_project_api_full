@@ -39,36 +39,28 @@ async function deleteCard(req, res) {
 }
 
 async function likeCard(req, res) {
-  const userId = res.locals.decode._id;
-  const cardId = req.params.cardId;
+  const {_id} = res.locals.decode;
+  const {cardId} = req.params;
   try {
-    const updatedCard = await Card.findByIdAndUpdate(
-      cardId,
-      { $addToSet: { likes: userId } },
-      { new: true }
-    );
-    if (!updatedCard) {
-      return res.status(404).json({ message: 'Cartão não encontrado' });
+    const card = await Card.findById(cardId);
+    if(!card) {
+      return res.status(404).json({message: 'Card não encontrado.'});
     }
-    res.status(200).json(updatedCard);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-
-async function dislikeCard(req, res){
-  const userId = res.locals.decode._id;
-  const cardId = req.params.cardId;
-  try {
-    const updatedCard = await Card.findByIdAndUpdate(
-      cardId,
-      { $pull: { likes: userId } },
-      { new: true }
-    );
-    if (!updatedCard) {
-      return res.status(404).json({ message: 'Cartão não encontrado' });
+    if(card.likes.includes(_id)) {
+      const dislikeCard = await Card.findByIdAndUpdate(
+        cardId,
+        { $pull: { likes: _id } },
+        { new: true }
+      );
+      return res.status(200).json(dislikeCard);
+    } else {
+      const likeCard = await Card.findByIdAndUpdate(
+        cardId,
+        { $addToSet: { likes: _id } },
+        { new: true }
+      );
+      return res.status(200).json(likeCard);
     }
-    res.json(updatedCard);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -79,5 +71,4 @@ module.exports = {
   createCard,
   deleteCard,
   likeCard,
-  dislikeCard
 };

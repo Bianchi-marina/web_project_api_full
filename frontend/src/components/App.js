@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Header from "./Header.js";
 import Main from "./Main.js";
 import Footer from "./Footer.js";
@@ -13,6 +13,7 @@ import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 import * as auth from "../utils/auth";
+import { CardProvider } from "../contexts/getCard.js";
 
 function App() {
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
@@ -52,7 +53,7 @@ function App() {
 
     api
       .getInitialCards()
-      .then(setCards)
+      .then(data => setCards(data))
       .catch((error) => {
         console.error("Erro ao buscar dados dos cartões:", error);
       });
@@ -102,28 +103,6 @@ function App() {
       .catch((error) => console.log(error));
   };
 
-  const handleCardLike = (card) => {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
-
-    api
-      .changeLikeCardStatus(card._id, isLiked)
-      .then((newCard) => {
-        setCards((state) =>
-          state.map((c) => (c._id === card._id ? newCard : c))
-        );
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleCardDelete = (card) => {
-    api
-      .deleteCard(card._id)
-      .then(() => {
-        setCards((state) => state.filter((c) => c._id !== card._id));
-      })
-      .catch((error) => console.log(error));
-  };
-
   const closeAllPopups = () => {
     setAddPlacePopupOpen(false);
     setEditProfilePopupOpen(false);
@@ -134,6 +113,7 @@ function App() {
   return (
     <BrowserRouter>
       <section className="page">
+        <CardProvider>
         <CurrentUserContext.Provider value={currentUser}>
           <Header
             loggedIn={loggedIn}
@@ -157,8 +137,6 @@ function App() {
                   onEditProfileClick={() => setEditProfilePopupOpen(true)}
                   onAddPlaceClick={() => setAddPlacePopupOpen(true)}
                   onCardClick={(card) => setselectedCard(card)}
-                  onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
                 />
               )}
             ></ProtectedRoute>
@@ -181,6 +159,7 @@ function App() {
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
           <Footer />
         </CurrentUserContext.Provider>
+        </CardProvider>
       </section>
     </BrowserRouter>
   );

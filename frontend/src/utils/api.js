@@ -77,22 +77,12 @@ class Api {
     }
     
     addLikes(cardId) {
-      return fetch(`${this._baseUrl}/cards/likes/${cardId}`, {
+      return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
         method: "PUT",
-        headers: this._headers,
-      }).then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-  
-        return Promise.reject(`Error: ${res.status}`);
-      });
-    }
-  
-    removeLikes(cardId) {
-      return fetch(`${this._baseUrl}/cards/likes/${cardId}`, {
-        method: "DELETE",
-        headers: this._headers,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          "Content-Type": "application/json"
+        },
       }).then((res) => {
         if (res.ok) {
           return res.json();
@@ -114,13 +104,6 @@ class Api {
   
         return Promise.reject(`Error: ${res.status}`);
       });
-    }
-
-    changeLikeCardStatus (cardId, isLiked) {
-      if(!isLiked) {
-        return this.addLikes(cardId)
-      }
-      return this.removeLikes(cardId);
     }
 }
 

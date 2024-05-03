@@ -80,6 +80,15 @@
 }
 .elements__button-like_click {
     background-image: url(/public/images/heart-full-icon.png);
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    width: 21px;
+    height: 19px;
+    opacity: 100%;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .elements__trash {
