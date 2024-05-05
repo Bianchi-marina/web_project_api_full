@@ -2,7 +2,7 @@ const BASE_URL = 'http://localhost:3000';
 
 export const register = async (email, password) => {
   try {
-    const response = await fetch(`${BASE_URL}/users/singup`, {
+    const response = await fetch(`${BASE_URL}/users/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -25,7 +25,7 @@ export const register = async (email, password) => {
 
 export const authorize = async (email, password) => {
   try {
-    const response = await fetch(`${BASE_URL}/users/singin`, {
+    const response = await fetch(`${BASE_URL}/users/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-const user = require('../models/user');
 
 async function getAllCards(req, res) {
   try {

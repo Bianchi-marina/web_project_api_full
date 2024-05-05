@@ -8,7 +8,6 @@ function Card({ cardData, onCardClick }) {
   const [isOwn, setIsOwn] = useState(false); 
   const [isLiked, setIsLiked] = useState(false);
   const {cards,setCard,handleCards} = useContext(CardContext);
-  console.log(cards);
 
 
   const cardDeleteButtonClassName = `elements__trash ${

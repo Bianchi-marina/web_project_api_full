@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 var cors = require('cors');
+const auth = require('./middlewares/auth');
 const app = express();
 app.use(cors());
 app.options('*', cors());
@@ -20,7 +21,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 app.use(express.json());
-
 app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
 

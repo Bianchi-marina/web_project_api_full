@@ -42,21 +42,20 @@ function App() {
           console.error("Erro ao verificar token:", error);
           setLoggedIn(false);
         });
+      api
+        .getUserInfo()
+        .then(setCurrentUser)
+        .catch((error) => console.log(error));
+
+      api
+        .getInitialCards()
+        .then((data) => setCards(data))
+        .catch((error) => {
+          console.error("Erro ao buscar dados dos cartões:", error);
+        });
     } else {
       setLoggedIn(false);
     }
-
-    api
-      .getUserInfo()
-      .then(setCurrentUser)
-      .catch((error) => console.log(error));
-
-    api
-      .getInitialCards()
-      .then(data => setCards(data))
-      .catch((error) => {
-        console.error("Erro ao buscar dados dos cartões:", error);
-      });
   }, []);
 
   const handleLogin = (email) => {
@@ -114,51 +113,51 @@ function App() {
     <BrowserRouter>
       <section className="page">
         <CardProvider>
-        <CurrentUserContext.Provider value={currentUser}>
-          <Header
-            loggedIn={loggedIn}
-            userEmail={userEmail}
-            handleLogout={handleLogout}
-          />
-          <Switch>
-            <Route path="/signup">
-              <Register />
-            </Route>
-            <Route path="/signin">
-              <Login handleLogin={handleLogin} />
-            </Route>
-            <ProtectedRoute
-              path="/"
+          <CurrentUserContext.Provider value={currentUser}>
+            <Header
               loggedIn={loggedIn}
-              component={() => (
-                <Main
-                  cards={cards}
-                  onEditAvatarClick={() => setEditAvatarPopupOpen(true)}
-                  onEditProfileClick={() => setEditProfilePopupOpen(true)}
-                  onAddPlaceClick={() => setAddPlacePopupOpen(true)}
-                  onCardClick={(card) => setselectedCard(card)}
-                />
-              )}
-            ></ProtectedRoute>
-          </Switch>
-          <EditProfilePopup
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser}
-          />
-          <EditAvatarPopup
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            onUpdateAvatar={handleUpdateAvatar}
-          />
-          <AddPlacePopup
-            isOpen={isAddPlacePopupOpen}
-            onClose={closeAllPopups}
-            onAddPlaceSubmit={handleCreateNewCard}
-          />
-          <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-          <Footer />
-        </CurrentUserContext.Provider>
+              userEmail={userEmail}
+              handleLogout={handleLogout}
+            />
+            <Switch>
+              <Route path="/signup">
+                <Register />
+              </Route>
+              <Route path="/signin">
+                <Login handleLogin={handleLogin} />
+              </Route>
+              <ProtectedRoute
+                path="/"
+                loggedIn={loggedIn}
+                component={() => (
+                  <Main
+                    cards={cards}
+                    onEditAvatarClick={() => setEditAvatarPopupOpen(true)}
+                    onEditProfileClick={() => setEditProfilePopupOpen(true)}
+                    onAddPlaceClick={() => setAddPlacePopupOpen(true)}
+                    onCardClick={(card) => setselectedCard(card)}
+                  />
+                )}
+              ></ProtectedRoute>
+            </Switch>
+            <EditProfilePopup
+              isOpen={isEditProfilePopupOpen}
+              onClose={closeAllPopups}
+              onUpdateUser={handleUpdateUser}
+            />
+            <EditAvatarPopup
+              isOpen={isEditAvatarPopupOpen}
+              onClose={closeAllPopups}
+              onUpdateAvatar={handleUpdateAvatar}
+            />
+            <AddPlacePopup
+              isOpen={isAddPlacePopupOpen}
+              onClose={closeAllPopups}
+              onAddPlaceSubmit={handleCreateNewCard}
+            />
+            <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+            <Footer />
+          </CurrentUserContext.Provider>
         </CardProvider>
       </section>
     </BrowserRouter>

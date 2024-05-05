@@ -15,7 +15,7 @@ class Api {
           if (res.ok) {
             return res.json();
           }
-          return Promise.reject(`Error: ${res.status}`);
+          // return Promise.reject(`Error: ${res.status}`);
       });
     }
     getUserInfo() {
@@ -26,7 +26,7 @@ class Api {
           if (res.ok) {
             return res.json();
           }
-          return Promise.reject(`Error: ${res.status}`);
+          // return Promise.reject(`Error: ${res.status}`);
       });
     }
     editProfile(userData) {

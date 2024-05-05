@@ -9,6 +9,6 @@ router.get('/', auth, getAllUsers);
 router.get('/me', auth, getCurrentUser);
 router.get('/:id', auth, verifyId, getUserById);
 router.patch('/me', auth, updateUserProfile);
-router.post('/singup', createUser);
-router.post('/singin', login);
+router.post('/signup', createUser);
+router.post('/signin', login);
 module.exports = router;
