@@ -7,27 +7,25 @@ function Main({
   onAddPlaceClick,
   onCardClick,
 }) {
-  const {cards,setCard,handleCards} = useContext(CardContext);
+  const { cards, setCard, handleCards } = useContext(CardContext);
   const [user, setUser] = useState([]);
-  const getUserInfo = async() => {
-    const response = await fetch('http://localhost:3000/users/me', {
+  const getUserInfo = async () => {
+    const response = await fetch("http://localhost:3000/users/me", {
       headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-      "Content-Type": "application/json"
-    },
-  })
-  const userInfo = await response.json();
-  setUser([userInfo]);
-  }
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const userInfo = await response.json();
+    setUser([userInfo]);
+  };
 
-  
-
-  useEffect(()=> {
+  useEffect(() => {
     getUserInfo();
     handleCards();
-  },[]);
+  }, []);
 
-  if (user.length === 0) return <h1>Loading...</h1>
+  if (user.length === 0) return <h1>Loading...</h1>;
 
   return (
     <>
@@ -75,11 +73,7 @@ function Main({
       <section className="elements">
         <ul className="elements__card elements">
           {cards.map((card) => (
-            <Card
-              cardData={card}
-              key={card._id}
-              onCardClick={onCardClick}
-            />
+            <Card cardData={card} key={card._id} onCardClick={onCardClick} />
           ))}
         </ul>
         <template id="template-card" />
