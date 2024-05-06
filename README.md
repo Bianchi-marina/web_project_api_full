@@ -1,5 +1,6 @@
 # Tripleten web_project_api_full
-<iframe src="https://giphy.com/embed/vqxviVfqGAa14SgeiC" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/madagascar-peng-pengu-vqxviVfqGAa14SgeiC">via GIPHY</a></p>
+![GIF](https://media.giphy.com/media/vqxviVfqGAa14SgeiC/giphy.gif)
+
 Sobre o Projeto
 Este projeto é uma aplicação full-stack para criação e interação com cards de fotos. Ele é construído utilizando MongoDB, Mongoose, npm, JavaScript e React. A aplicação inclui autenticação de usuários, registro de novos usuários e permite interagir com os cards criados por outros usuários.
 
